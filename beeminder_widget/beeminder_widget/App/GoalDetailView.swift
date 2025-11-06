@@ -24,7 +24,7 @@ struct GoalDetailView: View {
                     Text(displayGoal.statusEmoji)
                         .font(.system(size: 80))
 
-                    Text(displayGoal.title)
+                    Text(displayGoal.title.isEmpty ? displayGoal.slug : displayGoal.title)
                         .font(.title)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)

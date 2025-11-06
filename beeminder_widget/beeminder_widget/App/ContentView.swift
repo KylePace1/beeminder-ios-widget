@@ -153,7 +153,7 @@ struct GoalRowView: View {
                 .font(.title2)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(goal.title)
+                Text(goal.title.isEmpty ? goal.slug : goal.title)
                     .font(.headline)
                 Text(goal.limsum)
                     .font(.caption)

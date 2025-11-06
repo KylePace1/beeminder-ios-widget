@@ -186,51 +186,38 @@ struct SmallWidgetView: View {
     let goal: BeeminderGoal
 
     var body: some View {
-        ZStack {
-            // Background with subtle gradient based on status
-            LinearGradient(
-                colors: [bufferColor.opacity(0.1), bufferColor.opacity(0.05)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+        VStack(alignment: .leading, spacing: 10) {
+            // Title at top
+            Text(goal.title.isEmpty ? goal.slug : goal.title)
+                .font(.headline)
+                .lineLimit(2)
 
-            VStack(alignment: .leading, spacing: 12) {
-                // Status indicator and buffer
-                HStack(alignment: .top, spacing: 8) {
-                    Text(goal.statusEmoji)
-                        .font(.system(size: 32))
+            Spacer()
 
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("\(goal.safetyBufferDays)")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(bufferColor)
-                        Text("days")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
-                    }
-                }
+            // Status emoji and buffer days
+            HStack(alignment: .bottom) {
+                Text(goal.statusEmoji)
+                    .font(.system(size: 40))
 
                 Spacer()
 
-                // Goal title and description
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(goal.title)
-                        .font(.system(size: 16, weight: .semibold))
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
-                        .foregroundColor(.primary)
-
-                    Text(goal.limsum)
-                        .font(.system(size: 11))
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text("\(goal.safetyBufferDays)")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(bufferColor)
+                    Text("days")
+                        .font(.caption2)
                         .foregroundColor(.secondary)
-                        .lineLimit(1)
                 }
             }
-            .padding(16)
+
+            // Description at bottom
+            Text(goal.limsum)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
         }
+        .padding()
     }
 
     private var bufferColor: Color {
@@ -250,75 +237,48 @@ struct MediumWidgetView: View {
     let goal: BeeminderGoal
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [bufferColor.opacity(0.1), bufferColor.opacity(0.05)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            HStack(spacing: 20) {
-                // Left side: Big visual indicator
-                VStack(spacing: 10) {
-                    Text(goal.statusEmoji)
-                        .font(.system(size: 56))
-
-                    VStack(spacing: 4) {
-                        Text("\(goal.safetyBufferDays)")
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
-                            .foregroundColor(bufferColor)
-                        Text("DAYS")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
-                    }
-                }
-                .frame(width: 110)
-
-                // Right side: Goal details
-                VStack(alignment: .leading, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(goal.title)
-                            .font(.system(size: 18, weight: .bold))
-                            .lineLimit(2)
-                            .foregroundColor(.primary)
-
-                        Text(goal.limsum)
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
-                            .lineLimit(2)
-                    }
-
-                    Spacer()
-
-                    // Stats row
-                    HStack(spacing: 16) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Current")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .textCase(.uppercase)
-                            Text(String(format: "%.1f", goal.curval))
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
-                        }
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Rate")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .textCase(.uppercase)
-                            Text(String(format: "%.1f/day", goal.currate))
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-
-                Spacer(minLength: 0)
+        HStack(spacing: 16) {
+            // Left: Emoji and buffer
+            VStack(spacing: 8) {
+                Text(goal.statusEmoji)
+                    .font(.system(size: 50))
+                Text("\(goal.safetyBufferDays)")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(bufferColor)
+                Text("days")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            .padding(16)
+            .frame(width: 90)
+
+            Divider()
+
+            // Right: Goal info
+            VStack(alignment: .leading, spacing: 8) {
+                Text(goal.title.isEmpty ? goal.slug : goal.title)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                Text(goal.limsum)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+
+                Spacer()
+
+                HStack(spacing: 12) {
+                    Label(String(format: "%.1f", goal.curval), systemImage: "chart.bar.fill")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Label(String(format: "%.1f/day", goal.currate), systemImage: "arrow.up.forward")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer()
         }
+        .padding()
     }
 
     private var bufferColor: Color {
@@ -332,90 +292,76 @@ struct MediumWidgetView: View {
     }
 }
 
-// MARK: - Large Widget (Comprehensive Goal View)
+// MARK: - Large Widget
 
 struct LargeWidgetView: View {
     let goal: BeeminderGoal
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [bufferColor.opacity(0.12), bufferColor.opacity(0.03)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Most Urgent")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(goal.title.isEmpty ? goal.slug : goal.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Text(goal.statusEmoji)
+                    .font(.system(size: 50))
+            }
 
-            VStack(alignment: .leading, spacing: 20) {
-                // Header with emoji and label
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("MOST URGENT")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
-                        Text(goal.title)
-                            .font(.system(size: 24, weight: .bold))
-                            .lineLimit(2)
-                            .foregroundColor(.primary)
-                    }
+            Divider()
 
-                    Spacer()
+            // Description
+            Text(goal.limsum)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .lineLimit(2)
 
-                    Text(goal.statusEmoji)
-                        .font(.system(size: 50))
+            Spacer()
+
+            // Stats
+            HStack(spacing: 20) {
+                VStack(alignment: .leading) {
+                    Text("Safety Buffer")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("\(goal.safetyBufferDays) days")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(bufferColor)
                 }
 
-                // Description
-                Text(goal.limsum)
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+                VStack(alignment: .leading) {
+                    Text("Current")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.1f", goal.curval))
+                        .font(.title3)
+                        .fontWeight(.bold)
+                }
 
-                Spacer()
-
-                // Stats grid
-                VStack(spacing: 16) {
-                    HStack(spacing: 20) {
-                        StatBox(
-                            label: "Safety Buffer",
-                            value: "\(goal.safetyBufferDays)",
-                            unit: "days",
-                            color: bufferColor
-                        )
-
-                        StatBox(
-                            label: "Current",
-                            value: String(format: "%.1f", goal.curval),
-                            unit: "",
-                            color: .primary
-                        )
-
-                        StatBox(
-                            label: "Daily Rate",
-                            value: String(format: "%.1f", goal.currate),
-                            unit: "/day",
-                            color: .primary
-                        )
-                    }
-
-                    // Deadline bar
-                    HStack {
-                        Image(systemName: "clock.fill")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 14))
-                        Text("Deadline: \(formattedDeadline)")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.secondary)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Color.black.opacity(0.05))
-                    .cornerRadius(10)
+                VStack(alignment: .leading) {
+                    Text("Rate")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.1f/day", goal.currate))
+                        .font(.title3)
+                        .fontWeight(.bold)
                 }
             }
-            .padding(20)
+
+            // Deadline
+            Text("Deadline: \(formattedDeadline)")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
+        .padding()
     }
 
     private var bufferColor: Color {
@@ -433,37 +379,6 @@ struct LargeWidgetView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: goal.deadlineDate)
-    }
-}
-
-// Helper view for stat boxes
-struct StatBox: View {
-    let label: String
-    let value: String
-    let unit: String
-    let color: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(label)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(value)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundColor(color)
-                if !unit.isEmpty {
-                    Text(unit)
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color.black.opacity(0.05))
-        .cornerRadius(12)
     }
 }
 
